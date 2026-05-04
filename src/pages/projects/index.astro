@@ -11,48 +11,23 @@ const headings = [
 
 <PageLayout title='Projects' {headings} view>
   <p>
-    A small collection of research ideas, code experiments, and engineering notes. This page is
-    intentionally quiet for now; more concrete projects will be added as they become ready to share.
+    A small collection of interested projects.
   </p>
 
-  <h2 id='research'>Research</h2>
+  <h2 id='tools'>Tools</h2>
   <ProjectSection
     projects={[
       {
-        name: 'Dynamic Systems and Control',
-        description:
-          'Research interests around dynamic systems, optimal control, safety control, and reinforcement learning.',
-        links: []
+        name: 'Calendar Generation',
+        description: 'A lunar-solar calendar subscription generator',
+        links: [{ type: 'github', href: 'https://github.com/auryn-code/lunar-solar-birthday-calendar-generation' }]
       },
       {
-        name: 'Distributed Optimal Control',
-        description:
-          'Exploring scalable control methods for distributed systems and multi-agent coordination.',
-        links: []
+        name: 'Start Page',
+        description: 'A simple website startup page',
+        links: [{ type: 'github', href: 'https://github.com/auryn-code/aur-startpage'},{ type: 'website', href: 'https://start.aurlabs.co'}]
       }
     ]}
   />
-
-  <h2 id='software'>Software</h2>
-  <ProjectSection
-    projects={[
-      {
-        name: 'Personal Website',
-        description: 'A personal blog and portfolio built with Astro.',
-        links: [{ type: 'github', href: 'https://github.com/auryn-code' }]
-      }
-    ]}
-  />
-
-  <h2 id='notes'>Notes</h2>
-  <ProjectSection
-    projects={[
-      {
-        name: 'Research Notes',
-        description:
-          'Notes on control, learning, programming, and small ideas that are still taking shape.',
-        links: [{ type: 'site', href: '/blog' }]
-      }
-    ]}
-  />
+  
 </PageLayout>

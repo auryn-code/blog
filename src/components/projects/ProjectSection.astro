@@ -30,6 +30,14 @@ const projectIconSet: Record<string, iconsType> = {
   doc: 'document',
   release: 'package'
 }
+const getFaviconUrl = (url: string) => {
+  try {
+    const domain = new URL(url).hostname;
+    return `https://icons.duckduckgo.com/ip3/${domain}.ico`;
+  } catch (error) {
+    return '';
+  }
+};
 ---
 
 <div class={className} {...props}>
@@ -71,7 +79,7 @@ const projectIconSet: Record<string, iconsType> = {
             >
               <a
                 class='line-clamp-1 font-medium text-foreground no-underline transition-colors'
-                href={project.links[0].href}
+                
                 target='_blank'
               >
                 {project.name}
@@ -81,7 +89,10 @@ const projectIconSet: Record<string, iconsType> = {
               </div>
               <div class='flex flex-row items-center gap-x-2 sm:gap-x-3'>
                 {project.links.map((link) => {
-                  const icon = projectIconSet[link.type]
+                  // ✅ 判断是否为我们自定义的 'website' 类型
+                  const isWebsite = link.type === 'website';
+                  const icon = projectIconSet[link.type];
+                  
                   return (
                     <a
                       href={link.href}
@@ -89,7 +100,16 @@ const projectIconSet: Record<string, iconsType> = {
                       aria-label={link.type}
                       target='_blank'
                     >
-                      <Icon class='size-5' name={icon} />
+                      {/* ✅ 新增逻辑：如果是 website，渲染 img 标签；否则按原样渲染 Astro Icon */}
+                      {isWebsite ? (
+                        <img 
+                          src={getFaviconUrl(link.href)} 
+                          alt="site icon" 
+                          class="size-5 rounded-sm object-contain" 
+                        />
+                      ) : (
+                        <Icon class='size-5' name={icon} />
+                      )}
                     </a>
                   )
                 })}
