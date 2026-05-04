@@ -1,16 +1,19 @@
 import type { APIRoute } from 'astro'
 import { MongoClient } from 'mongodb'
 
-const MONGODB_URI = process.env.MONGODB_URI || ''
 const DB_NAME = 'twikoo'
 const COLLECTION_NAME = 'pageviews'
 
-if (!MONGODB_URI) {
-  throw new Error('MONGODB_URI environment variable is not set')
-}
-
 export const POST: APIRoute = async ({ request }) => {
-  // 开发环境：不依赖 MongoDB，返回模拟数据
+  const MONGODB_URI = process.env.MONGODB_URI || ''
+
+  if (!MONGODB_URI) {
+    return new Response(
+      JSON.stringify({ error: 'MONGODB_URI environment variable is not set', count: 0 }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    )
+  }
+
   if (!MONGODB_URI) {
     const { url } = await request.json() as { url: string }
     // 返回随机模拟浏览量
