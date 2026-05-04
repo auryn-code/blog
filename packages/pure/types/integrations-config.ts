@@ -58,6 +58,18 @@ export const IntegrationConfigSchema = () =>
       emoji: z.array(z.string()).optional(),
       /** Additional configurations for the Waline comment system. */
       additionalConfigs: z.record(z.string(), z.any()).default({})
+    }),
+
+    /** The Twikoo comment system */
+    twikoo: z.object({
+      /** Enable the Twikoo comment system. */
+      enable: z.boolean().default(false),
+      /** The Twikoo service URL (e.g., https://twikoo.aurlabs.co) */
+      envId: z.string().optional(),
+      /** Twikoo region for cloud service */
+      region: z.string().optional(),
+      /** Additional configurations for the Twikoo comment system. */
+      additionalConfigs: z.record(z.string(), z.any()).default({})
     })
   })
 

@@ -1,0 +1,24 @@
+---
+import { cn } from 'astro-pure/utils'
+
+interface Props {
+  comment?: boolean
+  class?: string
+}
+
+const { comment, class: className, ...props } = Astro.props
+---
+
+<div class={cn('text-base text-sm text-muted-foreground', className)} {...props}>
+  <span class='twikoo-stats'>-</span> views
+  {
+    comment && (
+      <>
+        {' | '}
+        <a href='#twikoo'>
+          <span class='twikoo-comment-count'>-</span> comments
+        </a>
+      </>
+    )
+  }
+</div>

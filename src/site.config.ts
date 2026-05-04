@@ -146,25 +146,22 @@ export const integ: IntegrationUserConfig = {
       className: 'zoomable'
     }
   },
-  // Comment system
+  // Comment system - Waline (disabled, using Twikoo instead)
   waline: {
-    enable: false,
-    // Server service link
-    server: '',
-    // Show meta info for comments
-    showMeta: false,
-    // Refer https://waline.js.org/en/guide/features/emoji.html
-    emoji: ['bmoji', 'weibo'],
-    // Refer https://waline.js.org/en/reference/client/props.html
+    enable: false
+  },
+  // Comment system - Twikoo
+  twikoo: {
+    enable: true,
+    // Your Twikoo service URL (e.g., https://twikoo.aurlabs.co)
+    envId: 'https://twikoo.aurlabs.co',
+    // region for cloud service (optional, default: 'ap-shanghai')
+    region: '',
+    // Refer https://twikoo.js.org/
     additionalConfigs: {
-      // search: false,
-      pageview: false,
-      comment: false,
-      locale: {
-        reaction0: 'Like',
-        placeholder: 'Welcome to comment. (Email to receive replies. Login is unnecessary)'
-      },
-      imageUploader: false
+      // Hide path input if you want
+      // onCommentLoaded: () => {},
+      // See more options at: https://twikoo.js.org/frontend/sdk.html
     }
   }
 }

@@ -389,3 +389,32 @@ a {
     color: hsl(var(--primary) / var(--un-text-opacity, 1));
   }
 }
+
+/* Hide sponsorship link and its container */
+a[href*='#sponsorship'],
+a[href*='/projects#sponsorship'] {
+  display: none !important;
+}
+
+a[href*='#sponsorship']?.parentElement,
+a[href*='/projects#sponsorship']?.parentElement {
+  display: none !important;
+}
+
+/* Hide the entire wrapper containing the sponsorship link */
+article ~ * > a[href*='#sponsorship'],
+article ~ * > a[href*='/projects#sponsorship'] {
+  display: none !important;
+}
+
+/* More aggressive: hide any container holding the sponsorship link */
+a[href*='#sponsorship']::parent,
+a[href*='/projects#sponsorship']::parent {
+  display: none !important;
+}
+
+/* Target the generic wrapper div that contains the link */
+div:has(> a[href*='#sponsorship']),
+div:has(> a[href*='/projects#sponsorship']) {
+  display: none !important;
+}

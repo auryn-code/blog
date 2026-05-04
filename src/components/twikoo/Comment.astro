@@ -1,0 +1,42 @@
+---
+import config from '@/site-config'
+
+import { cn } from 'astro-pure/utils'
+
+const { class: className } = Astro.props
+---
+
+{
+  config.integ.twikoo.enable && (
+    <comment-component>
+      <div id='twikoo' class={cn('not-prose', className)}>
+        Loading comments...
+      </div>
+    </comment-component>
+  )
+}
+
+<script>
+  import { init as twikooInit } from 'twikoo'
+  import config from 'virtual:config'
+
+  const twikooConfig = config.integ.twikoo
+
+  class Comment extends HTMLElement {
+    constructor() {
+      super()
+    }
+
+    connectedCallback() {
+      twikooInit({
+        // Your Twikoo server URL
+        envId: twikooConfig.envId || 'https://twikoo.aurlabs.co',
+        el: '#twikoo',
+        path: window.location.pathname,
+        ...twikooConfig.additionalConfigs
+      })
+    }
+  }
+
+  customElements.define('comment-component', Comment)
+</script>
