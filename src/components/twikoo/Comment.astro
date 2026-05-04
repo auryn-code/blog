@@ -22,17 +22,41 @@ const { class: className } = Astro.props
 
   const twikooConfig = config.integ.twikoo
 
+  // 用于触发统计更新
+  function refreshPageStats() {
+    window.dispatchEvent(new CustomEvent('twikoo:refresh-stats'))
+  }
+
+  // 将 Twikoo 实例保存到全局作用域，供 PageInfo 使用
+  ;(window as any).twikooInstance = {
+    envId: twikooConfig.envId || 'https://twikoo.aurlabs.co',
+    ready: false
+  }
+
   class Comment extends HTMLElement {
     constructor() {
       super()
     }
 
     connectedCallback() {
+      const envId = twikooConfig.envId || 'https://twikoo.aurlabs.co'
+      const path = window.location.pathname
+
+      // 初始化 Twikoo
       twikooInit({
-        // Your Twikoo server URL
-        envId: twikooConfig.envId || 'https://twikoo.aurlabs.co',
+        envId: envId,
         el: '#twikoo',
-        path: window.location.pathname,
+        path: path,
+        onCommentLoaded: () => {
+          // Twikoo 加载完成
+          ;(window as any).twikooInstance.ready = true
+          // 立即刷新统计
+          refreshPageStats()
+        },
+        onComment: () => {
+          // 评论提交成功后，刷新统计
+          setTimeout(refreshPageStats, 500)
+        },
         ...twikooConfig.additionalConfigs
       })
     }
