@@ -14,16 +14,6 @@ export const POST: APIRoute = async ({ request }) => {
     )
   }
 
-  if (!MONGODB_URI) {
-    const { url } = await request.json() as { url: string }
-    // 返回随机模拟浏览量
-    const mockCount = Math.floor(Math.random() * 100) + 1
-    return new Response(
-      JSON.stringify({ url, count: mockCount }),
-      { status: 200, headers: { 'Content-Type': 'application/json' } }
-    )
-  }
-
   try {
     const { url } = await request.json() as { url: string }
     
