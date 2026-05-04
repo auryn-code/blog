@@ -7,12 +7,11 @@ interface Props {
   degree: string
   school: string
   college: string
-  program: string
   date: string
   status?: string
 }
 
-const { degree, school, college, program, date, status } = Astro.props
+const { degree, school, college, date, status } = Astro.props
 ---
 
 <article class='education-card'>
@@ -27,7 +26,6 @@ const { degree, school, college, program, date, status } = Astro.props
     </div>
     <h3>{school}</h3>
     <p class='education-card__college'>{college}</p>
-    <p class='education-card__program'>{program}</p>
     {status && <p class='education-card__status'>{status}</p>}
   </div>
 </article>
@@ -98,7 +96,6 @@ const { degree, school, college, program, date, status } = Astro.props
   .education-card__topline span,
   .education-card h3,
   .education-card__college,
-  .education-card__program,
   .education-card__status {
     margin: 0;
   }
@@ -113,12 +110,6 @@ const { degree, school, college, program, date, status } = Astro.props
   .education-card__college {
     margin-top: 0.35rem;
     color: hsl(var(--foreground) / 0.86);
-    line-height: 1.45;
-  }
-
-  .education-card__program {
-    margin-top: 0.2rem;
-    color: hsl(var(--muted-foreground));
     line-height: 1.45;
   }
 
