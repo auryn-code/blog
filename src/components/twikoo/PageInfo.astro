@@ -7,18 +7,136 @@ interface Props {
 }
 
 const { comment, class: className, ...props } = Astro.props
+const path = Astro.url.pathname
 ---
 
-<div class={cn('text-base text-sm text-muted-foreground', className)} {...props}>
-  <span class='twikoo-stats'>-</span> views
+<div class={cn('text-base text-sm text-muted-foreground', className)} data-path={path} {...props}>
+  <span class='twikoo-pageview-count' data-path={path}>-</span> views
   {
     comment && (
       <>
         {' | '}
         <a href='#twikoo'>
-          <span class='twikoo-comment-count'>-</span> comments
+          <span class='twikoo-comment-count' data-path={path}>-</span> comments
         </a>
       </>
     )
   }
 </div>
+
+<script>
+  import config from 'virtual:config'
+
+  const twikooConfig = config.integ.twikoo
+
+  async function loadPageStats() {
+    const envId = twikooConfig.envId || 'https://twikoo.aurlabs.co'
+    
+    // 获取所有需要统计的路径
+    const elements = document.querySelectorAll('[data-path]')
+    
+    if (elements.length === 0) return
+
+    try {
+      // 获取所有不同的路径
+      const paths = Array.from(elements).map(el => el.getAttribute('data-path')).filter(Boolean)
+      const uniquePaths = [...new Set(paths)]
+
+      // 对每个路径查询评论数和浏览量
+      for (const path of uniquePaths) {
+        // 1. 获取评论数
+        try {
+          const commentResponse = await fetch(`${envId}/api/comments`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              url: path,
+              sort: 'latest',
+              limit: 1,
+              offset: 0
+            })
+          })
+
+          if (commentResponse.ok) {
+            const data = await commentResponse.json()
+            
+            // 处理 Twikoo API 响应
+            let count = 0
+            
+            // 如果是错误响应（code: 100），设置为 0
+            if (data.code !== undefined && data.code !== 0) {
+              count = 0
+            } else if (Array.isArray(data) && data.length > 0) {
+              // 如果是数组，计算长度
+              count = data.length
+              if (data[0] && typeof data[0].count === 'number') {
+                count = data[0].count
+              }
+            } else if (data.data && Array.isArray(data.data)) {
+              count = data.data.length
+            } else if (typeof data.count === 'number') {
+              count = data.count
+            }
+            
+            // 更新该路径的所有计数元素
+            document.querySelectorAll(`.twikoo-comment-count[data-path="${path}"]`).forEach(el => {
+              el.textContent = String(count)
+            })
+          }
+        } catch (error) {
+          console.debug(`Failed to load comment count for ${path}:`, error)
+        }
+
+        // 2. 获取浏览统计
+        try {
+          const readResponse = await fetch(`${envId}/api/reads`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              url: path
+            })
+          })
+
+          if (readResponse.ok) {
+            const data = await readResponse.json()
+            
+            // 处理 Twikoo API 响应
+            let reads = 0
+            
+            // 如果是错误响应（code: 100），设置为 0
+            if (data.code !== undefined && data.code !== 0) {
+              reads = 0
+            } else if (typeof data.reads === 'number') {
+              reads = data.reads
+            } else if (typeof data.count === 'number') {
+              reads = data.count
+            } else if (typeof data === 'number') {
+              reads = data
+            }
+            
+            // 更新该路径的所有浏览量元素
+            document.querySelectorAll(`.twikoo-pageview-count[data-path="${path}"]`).forEach(el => {
+              el.textContent = String(reads)
+            })
+          }
+        } catch (error) {
+          console.debug(`Failed to load pageview count for ${path}:`, error)
+        }
+      }
+    } catch (error) {
+      console.error('Failed to load page stats:', error)
+    }
+  }
+
+  // 页面加载完后获取统计
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', loadPageStats)
+  } else {
+    loadPageStats()
+  }
+</script>
+
