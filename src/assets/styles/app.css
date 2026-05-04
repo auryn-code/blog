@@ -18,19 +18,19 @@
 }
 .dark {
   /* Primary */
-  --primary: 195 95% 85%;
+  --primary: 42 12% 78%;
   /* Foreground */
   --foreground: 0 0% 98%;
-  --muted-foreground: 240 5% 74.9%;
+  --muted-foreground: 0 0% 72%;
   /* Background */
-  --background: 240 20.54% 5.2%;
-  --muted: 240 5.9% 13%;
-  --card: 240 3.7% 24.9%;
+  --background: 0 0% 3.5%;
+  --muted: 0 0% 8.5%;
+  --card: 0 0% 13%;
 
   /* Basic */
-  --border: 240 3.7% 22.9%;
-  --input: 240 3.7% 17.9%;
-  --ring: 240 4.9% 83.9%;
+  --border: 0 0% 18%;
+  --input: 0 0% 13%;
+  --ring: 42 10% 78%;
 }
 :root {
   --un-default-border-color: hsl(var(--border) / 1);
@@ -40,6 +40,349 @@ html.dark {
 }
 
 /* Global */
+body {
+  min-height: 100dvh;
+}
+
+.site-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 50% -12%, rgba(255, 255, 255, 0.11), transparent 34%),
+    radial-gradient(ellipse at 18% 22%, rgba(180, 164, 130, 0.08), transparent 30%),
+    linear-gradient(180deg, #090909 0%, #050505 52%, #010101 100%);
+}
+
+.site-backdrop::before {
+  position: absolute;
+  inset: -20%;
+  content: '';
+  background:
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.04) 0 1px, transparent 1px 80px),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 80px);
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.72), transparent 78%);
+  animation: grid-drift 28s linear infinite;
+}
+
+.site-backdrop::after {
+  position: absolute;
+  inset: 0;
+  content: '';
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.08), transparent 30%),
+    radial-gradient(ellipse at 50% 68%, transparent 0%, rgba(0, 0, 0, 0.46) 58%),
+    linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.62) 72%, #010101 100%);
+}
+
+.site-backdrop__grid,
+.site-backdrop__traces,
+.site-backdrop__scan {
+  position: absolute;
+  inset: 0;
+}
+
+.site-backdrop__grid::before,
+.site-backdrop__grid::after,
+.site-backdrop__traces::before,
+.site-backdrop__traces::after {
+  position: absolute;
+  inset: 0;
+  content: '';
+}
+
+.site-backdrop__grid {
+  background-image:
+    linear-gradient(
+      115deg,
+      transparent 0 42.6%,
+      rgba(255, 255, 255, 0.075) 43.8%,
+      transparent 45.2%
+    ),
+    linear-gradient(245deg, transparent 0 44.5%, rgba(193, 181, 155, 0.065) 46%, transparent 47.4%);
+  background-size: 300px 300px;
+  opacity: 0.62;
+  animation: circuit-slide 36s linear infinite;
+}
+
+.site-backdrop__grid::before {
+  background-image:
+    radial-gradient(circle at 14% 22%, rgba(255, 255, 255, 0.95) 0 1.2px, transparent 2.2px),
+    radial-gradient(circle at 38% 68%, rgba(217, 204, 178, 0.78) 0 1.3px, transparent 2.3px),
+    radial-gradient(circle at 71% 31%, rgba(255, 255, 255, 0.68) 0 1.1px, transparent 2px),
+    radial-gradient(circle at 86% 74%, rgba(217, 204, 178, 0.62) 0 1.2px, transparent 2.2px),
+    radial-gradient(circle at 49% 44%, rgba(255, 255, 255, 0.58) 0 1px, transparent 2px);
+  background-size:
+    380px 380px,
+    520px 520px,
+    460px 460px,
+    620px 620px,
+    310px 310px;
+  opacity: 0.74;
+  animation: star-drift 34s linear infinite;
+}
+
+.site-backdrop__grid::after {
+  background-image:
+    radial-gradient(circle at 22% 82%, rgba(255, 255, 255, 0.62) 0 1px, transparent 2px),
+    radial-gradient(circle at 53% 18%, rgba(255, 255, 255, 0.56) 0 1px, transparent 2.1px),
+    radial-gradient(circle at 79% 56%, rgba(217, 204, 178, 0.52) 0 1px, transparent 2px),
+    radial-gradient(circle at 9% 48%, rgba(255, 255, 255, 0.48) 0 1px, transparent 2px);
+  background-size:
+    700px 700px,
+    580px 580px,
+    760px 760px,
+    420px 420px;
+  filter: blur(0.2px);
+  opacity: 0.55;
+  animation: star-drift-reverse 48s linear infinite;
+}
+
+.site-backdrop__traces {
+  background:
+    linear-gradient(
+      90deg,
+      transparent 0 12%,
+      rgba(255, 255, 255, 0.11) 12.2%,
+      rgba(217, 204, 178, 0.08) 12.45%,
+      transparent 12.9%
+    ),
+    linear-gradient(
+      90deg,
+      transparent 0 67%,
+      rgba(180, 164, 130, 0.09) 67.2%,
+      rgba(255, 255, 255, 0.08) 67.45%,
+      transparent 67.9%
+    ),
+    linear-gradient(0deg, transparent 0 31%, rgba(255, 255, 255, 0.09) 31.1%, transparent 31.65%);
+  background-size: 100% 210px;
+  opacity: 0.46;
+  transform: skewY(-8deg) translateY(-8%);
+}
+
+.site-backdrop__traces::before {
+  inset: -30%;
+  background:
+    linear-gradient(
+      112deg,
+      transparent 0 44%,
+      rgba(255, 255, 255, 0.2) 44.8%,
+      rgba(217, 204, 178, 0.24) 45.2%,
+      rgba(255, 255, 255, 0.12) 45.75%,
+      transparent 46.65% 100%
+    ),
+    linear-gradient(
+      112deg,
+      transparent 0 62%,
+      rgba(255, 255, 255, 0.15) 62.25%,
+      rgba(217, 204, 178, 0.1) 62.65%,
+      transparent 63.5% 100%
+    );
+  background-size:
+    920px 920px,
+    760px 760px;
+  background-position:
+    0 0,
+    280px 180px;
+  filter: blur(0.4px);
+  opacity: 0.72;
+  animation: flow-lines 15s linear infinite;
+}
+
+.site-backdrop__traces::after {
+  inset: -20%;
+  background:
+    linear-gradient(
+      72deg,
+      transparent 0 50%,
+      rgba(255, 255, 255, 0.17) 50.1%,
+      rgba(217, 204, 178, 0.2) 50.45%,
+      rgba(255, 255, 255, 0.1) 50.9%,
+      transparent 51.7% 100%
+    ),
+    linear-gradient(
+      72deg,
+      transparent 0 28%,
+      rgba(255, 255, 255, 0.11) 28.15%,
+      rgba(217, 204, 178, 0.075) 28.45%,
+      transparent 29.15% 100%
+    );
+  background-size:
+    840px 840px,
+    1100px 1100px;
+  background-position:
+    360px 80px,
+    0 420px;
+  opacity: 0.5;
+  animation: flow-lines-reverse 20s linear infinite;
+}
+
+.site-backdrop__scan {
+  background:
+    radial-gradient(circle at 12% 0%, rgba(255, 255, 255, 0.65) 0 1.1px, transparent 2px),
+    radial-gradient(circle at 42% 8%, rgba(217, 204, 178, 0.5) 0 1px, transparent 2.2px),
+    radial-gradient(circle at 73% 2%, rgba(255, 255, 255, 0.46) 0 1px, transparent 2px),
+    radial-gradient(circle at 91% 14%, rgba(217, 204, 178, 0.42) 0 1px, transparent 2px),
+    linear-gradient(
+      110deg,
+      transparent 0 38%,
+      rgba(255, 255, 255, 0.075) 42%,
+      rgba(180, 164, 130, 0.095) 44%,
+      transparent 50% 100%
+    );
+  background-size:
+    260px 260px,
+    360px 360px,
+    420px 420px,
+    520px 520px,
+    240% 240%;
+  mix-blend-mode: screen;
+  opacity: 0.58;
+  animation: snowfall 20s linear infinite;
+}
+
+.dark .site-backdrop {
+  background:
+    radial-gradient(ellipse at 50% -12%, rgba(255, 255, 255, 0.1), transparent 34%),
+    radial-gradient(ellipse at 18% 22%, rgba(180, 164, 130, 0.08), transparent 30%),
+    linear-gradient(180deg, #090909 0%, #050505 52%, #010101 100%);
+}
+
+html:not(.dark) .site-backdrop {
+  background:
+    linear-gradient(135deg, rgba(20, 184, 166, 0.16), transparent 28%),
+    linear-gradient(225deg, rgba(37, 99, 235, 0.12), transparent 30%),
+    linear-gradient(180deg, #f8fbff 0%, #edf4fb 48%, #f7f8fb 100%);
+}
+
+html:not(.dark) .site-backdrop::before {
+  background:
+    repeating-linear-gradient(90deg, rgba(15, 23, 42, 0.08) 0 1px, transparent 1px 72px),
+    repeating-linear-gradient(0deg, rgba(15, 23, 42, 0.07) 0 1px, transparent 1px 72px);
+}
+
+html:not(.dark) .site-backdrop::after {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.7), transparent 35%),
+    linear-gradient(180deg, transparent 0%, rgba(248, 250, 252, 0.55) 72%, #f7f8fb 100%);
+}
+
+@keyframes grid-drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(72px, 72px, 0);
+  }
+}
+
+@keyframes circuit-slide {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 300px 300px;
+  }
+}
+
+@keyframes star-drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-90px, 70px, 0);
+  }
+}
+
+@keyframes star-drift-reverse {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(120px, -80px, 0);
+  }
+}
+
+@keyframes flow-lines {
+  from {
+    background-position:
+      0 0,
+      280px 180px;
+  }
+  to {
+    background-position:
+      920px 920px,
+      1040px 940px;
+  }
+}
+
+@keyframes flow-lines-reverse {
+  from {
+    background-position:
+      360px 80px,
+      0 420px;
+  }
+  to {
+    background-position:
+      -480px 920px,
+      -1100px 1520px;
+  }
+}
+
+@keyframes snowfall {
+  from {
+    background-position:
+      0 -260px,
+      120px -360px,
+      260px -420px,
+      80px -520px,
+      120% 0;
+  }
+  to {
+    background-position:
+      90px 260px,
+      -30px 360px,
+      340px 420px,
+      210px 520px,
+      120% 0;
+  }
+}
+
+@keyframes scan-sweep {
+  0%,
+  18% {
+    background-position:
+      0 -260px,
+      120px -360px,
+      260px -420px,
+      80px -520px,
+      120% 0;
+  }
+  58%,
+  100% {
+    background-position:
+      90px 260px,
+      -30px 360px,
+      340px 420px,
+      210px 520px,
+      -80% 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-backdrop::before,
+  .site-backdrop__grid,
+  .site-backdrop__grid::before,
+  .site-backdrop__grid::after,
+  .site-backdrop__traces::before,
+  .site-backdrop__traces::after,
+  .site-backdrop__scan {
+    animation: none;
+  }
+}
+
 a {
   transition: color 0.2s ease;
   &:hover {

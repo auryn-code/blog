@@ -37,11 +37,12 @@
     "./libs": "./libs/index.ts"
   },
   "dependencies": {
-    "@astrojs/mdx": "^4.3.13",
+    "@astrojs/mdx": "^5.0.4",
     "@astrojs/sitemap": "^3.6.0",
+    "@astrojs/vercel": "10.0.6",
     "@pagefind/default-ui": "^1.4.0",
     "@unocss/reset": "^66.5.10",
-    "astro": "^5.16.6",
+    "astro": "^6.2.1",
     "hast-util-select": "^6.0.4",
     "node-html-parser": "^7.0.1",
     "pagefind": "^1.4.0",

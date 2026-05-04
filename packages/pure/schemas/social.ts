@@ -3,14 +3,18 @@ import { z } from 'astro/zod'
 import { socialLinks } from '../types/constants'
 
 export const SocialLinksSchema = () =>
-  z
-    .record(
-      z.enum(socialLinks),
-      // Link to the respective social profile for this site
-      z
-        .string()
-        .url()
-    )
+  ('partialRecord' in z
+    ? z.partialRecord(
+        z.enum(socialLinks),
+        // Link to the respective social profile for this site
+        z.string().url()
+      )
+    : z.record(
+        z.enum(socialLinks),
+        // Link to the respective social profile for this site
+        z.string().url()
+      )
+  )
     .transform((links) => {
       const labelledLinks: Partial<Record<keyof typeof links, { label: string; url: string }>> = {}
       for (const _k in links) {

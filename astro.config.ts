@@ -1,7 +1,7 @@
 import { rehypeHeadingIds } from '@astrojs/markdown-remark'
 import vercel from '@astrojs/vercel'
 import AstroPureIntegration from 'astro-pure'
-import { defineConfig, fontProviders } from 'astro/config'
+import { defineConfig } from 'astro/config'
 import rehypeKatex from 'rehype-katex'
 import remarkMath from 'remark-math'
 
@@ -25,7 +25,7 @@ import config from './src/site.config.ts'
 // https://astro.build/config
 export default defineConfig({
   // [Basic]
-  site: 'https://astro-pure.js.org',
+  site: 'https://blog.aurlabs.co',
   // Deploy to a sub path
   // https://astro-pure.js.org/docs/setup/deployment#platform-with-base-path
   // base: '/astro-pure/',
@@ -106,32 +106,9 @@ export default defineConfig({
     // sitemap(),
     // mdx(),
     AstroPureIntegration(config)
-  ],
+  ]
 
   // [Experimental]
-  experimental: {
-    // Allow compatible editors to support intellisense features for content collection entries
-    // https://docs.astro.build/en/reference/experimental-flags/content-intellisense/
-    contentIntellisense: true,
-    // Enable SVGO optimization for SVG assets
-    // https://docs.astro.build/en/reference/experimental-flags/svg-optimization/
-    svgo: true,
-    // Enable font preloading and optimization
-    // https://docs.astro.build/en/reference/experimental-flags/fonts/
-    fonts: [
-      {
-        provider: fontProviders.fontshare(),
-        name: 'Satoshi',
-        cssVariable: '--font-satoshi',
-        // Default included:
-        // weights: [400],
-        // styles: ["normal", "italics"],
-        // subsets: ["cyrillic-ext", "cyrillic", "greek-ext", "greek", "vietnamese", "latin-ext", "latin"],
-        // fallbacks: ["sans-serif"],
-        styles: ['normal', 'italic'],
-        weights: [400, 500],
-        subsets: ['latin']
-      }
-    ]
-  }
+  // Removed outdated experimental flags so this template can run on the
+  // Astro version required by the bundled local theme package.
 })

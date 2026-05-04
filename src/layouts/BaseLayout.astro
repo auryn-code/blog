@@ -27,19 +27,27 @@ const {
     <ThemeProvider />
   </head>
 
-  <body class='flex justify-center bg-background text-foreground' {...props}>
+  <body
+    class='relative flex justify-center overflow-x-hidden bg-background text-foreground'
+    {...props}
+  >
+    <div class='site-backdrop' aria-hidden='true'>
+      <div class='site-backdrop__grid'></div>
+      <div class='site-backdrop__traces'></div>
+      <div class='site-backdrop__scan'></div>
+    </div>
     {
       highlightColor && (
         <div
           id='highlight-gradient'
-          class='pointer-events-none absolute start-0 top-0 z-0 h-screen w-full opacity-25'
+          class='pointer-events-none absolute start-0 top-0 z-1 h-screen w-full opacity-20'
           style={`background-image:linear-gradient(${highlightColor},transparent)`}
         />
       )
     }
     <div
       id='main-container'
-      class='w-full max-w-[70rem] min-h-[100dvh] flex flex-col justify-between'
+      class='relative z-10 w-full max-w-[70rem] min-h-[100dvh] flex flex-col justify-between'
     >
       <Header />
       <div class='flex-1 w-full'>

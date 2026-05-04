@@ -1,0 +1,70 @@
+---
+interface Props {
+  name?: string
+}
+
+const { name = 'Aurrell' } = Astro.props
+---
+
+<h1 class='signature' aria-label={name}>
+  <span class='signature__text'>{name}</span>
+</h1>
+
+<style>
+  .signature {
+    position: relative;
+    margin: 0;
+    color: hsl(var(--foreground));
+    line-height: 1;
+    text-align: center;
+  }
+
+  .signature__text {
+    display: inline-block;
+    font-family: 'Snell Roundhand', 'Apple Chancery', 'Segoe Script', 'Brush Script MT', cursive;
+    font-size: clamp(2.25rem, 4.8vw, 3.6rem);
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    text-shadow:
+      0 0 0.5rem rgba(255, 255, 255, 0.18),
+      0 0.25rem 1.5rem rgba(0, 0, 0, 0.42);
+    animation:
+      signature-reveal 1.85s cubic-bezier(0.5, 0, 0.2, 1) both,
+      signature-breathe 4.8s ease-in-out 2s infinite;
+  }
+
+  @keyframes signature-reveal {
+    0% {
+      opacity: 0;
+      clip-path: inset(0 100% 0 0);
+      transform: translateY(0.25rem);
+      filter: blur(0.35rem);
+    }
+    100% {
+      opacity: 1;
+      clip-path: inset(0 0 0 0);
+      transform: translateY(0);
+      filter: blur(0);
+    }
+  }
+
+  @keyframes signature-breathe {
+    0%,
+    100% {
+      text-shadow:
+        0 0 0.45rem rgba(255, 255, 255, 0.14),
+        0 0.25rem 1.5rem rgba(0, 0, 0, 0.42);
+    }
+    50% {
+      text-shadow:
+        0 0 0.75rem rgba(255, 255, 255, 0.28),
+        0 0.25rem 1.6rem rgba(0, 0, 0, 0.48);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .signature__text {
+      animation: none;
+    }
+  }
+</style>

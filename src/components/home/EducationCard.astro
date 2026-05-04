@@ -1,0 +1,146 @@
+---
+import { Image } from 'astro:assets'
+
+import pkuMark from '@/assets/pku-mark-white.png'
+
+interface Props {
+  degree: string
+  school: string
+  college: string
+  program: string
+  date: string
+  status?: string
+}
+
+const { degree, school, college, program, date, status } = Astro.props
+---
+
+<article class='education-card'>
+  <div class='education-card__mark'>
+    <Image src={pkuMark} alt={`${school} logo`} class='education-card__logo' loading='lazy' />
+  </div>
+
+  <div class='education-card__content'>
+    <div class='education-card__topline'>
+      <p>{degree}</p>
+      <span>{date}</span>
+    </div>
+    <h3>{school}</h3>
+    <p class='education-card__college'>{college}</p>
+    <p class='education-card__program'>{program}</p>
+    {status && <p class='education-card__status'>{status}</p>}
+  </div>
+</article>
+
+<style>
+  .education-card {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1rem;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 1rem;
+    padding: 1rem;
+    background:
+      linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.025)),
+      rgba(255, 255, 255, 0.035);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      0 1.25rem 3rem rgba(0, 0, 0, 0.18);
+  }
+
+  .education-card::after {
+    position: absolute;
+    inset: auto -20% -55% 35%;
+    height: 8rem;
+    content: '';
+    background: radial-gradient(ellipse, rgba(255, 255, 255, 0.1), transparent 68%);
+    pointer-events: none;
+  }
+
+  .education-card__mark {
+    display: grid;
+    place-items: center;
+    width: 4.4rem;
+    height: 4.4rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.9rem;
+    background:
+      radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.16), transparent 48%),
+      rgba(0, 0, 0, 0.24);
+  }
+
+  .education-card__logo {
+    width: 2.9rem;
+    height: 2.9rem;
+    object-fit: contain;
+    opacity: 0.94;
+    filter: drop-shadow(0 0 0.45rem rgba(255, 255, 255, 0.16));
+  }
+
+  .education-card__content {
+    min-width: 0;
+  }
+
+  .education-card__topline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.35rem 1rem;
+    margin-bottom: 0.35rem;
+    color: hsl(var(--muted-foreground));
+    font-size: 0.86rem;
+  }
+
+  .education-card__topline p,
+  .education-card__topline span,
+  .education-card h3,
+  .education-card__college,
+  .education-card__program,
+  .education-card__status {
+    margin: 0;
+  }
+
+  .education-card h3 {
+    color: hsl(var(--foreground));
+    font-size: 1.08rem;
+    font-weight: 600;
+    letter-spacing: 0;
+  }
+
+  .education-card__college {
+    margin-top: 0.35rem;
+    color: hsl(var(--foreground) / 0.86);
+    line-height: 1.45;
+  }
+
+  .education-card__program {
+    margin-top: 0.2rem;
+    color: hsl(var(--muted-foreground));
+    line-height: 1.45;
+  }
+
+  .education-card__status {
+    margin-top: 0.65rem;
+    width: fit-content;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+    padding: 0.16rem 0.55rem;
+    color: hsl(var(--foreground) / 0.82);
+    background: rgba(255, 255, 255, 0.055);
+    font-size: 0.78rem;
+  }
+
+  @media (max-width: 480px) {
+    .education-card {
+      grid-template-columns: 1fr;
+    }
+
+    .education-card__mark {
+      width: 4rem;
+      height: 4rem;
+    }
+  }
+</style>

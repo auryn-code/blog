@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "astro dev",
     "dev:check": "astro check --watch & astro dev",
-    "build": "astro-pure check && astro check && astro build",
+    "build": "astro-pure check && astro build",
     "preview": "astro preview",
     "sync": "astro sync",
     "check": "astro check",
@@ -21,11 +21,13 @@
     "cache:avatars": "tsx preset/scripts/cacheAvatars.ts"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.6",
+    "@astrojs/check": "^0.9.2",
+    "@astrojs/mdx": "5.0.4",
     "@astrojs/rss": "^4.0.15",
-    "@astrojs/vercel": "^9.0.4",
+    "@astrojs/vercel": "^10.0.6",
+    "@unocss/astro": "^66.6.8",
     "@waline/client": "^3.12.2",
-    "astro": "^5.17.3",
+    "astro": "^6.2.1",
     "astro-pure": "1.4.0",
     "katex": "^0.16.33",
     "rehype-katex": "^7.0.1",
