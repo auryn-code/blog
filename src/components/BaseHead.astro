@@ -10,7 +10,9 @@ const { articleDate, description, ogImage, title } = Astro.props
 const siteTitle =
   title === 'Home' ? config.title : `${title} ${config.titleDelimiter} ${config.title}`
 const canonicalURL = new URL(Astro.url.pathname, Astro.site)
-const socialImageURL = new URL(ogImage ? ogImage : config.socialCard, Astro.url).href
+const socialImageURL = new URL(ogImage ? ogImage : config.socialCard, Astro.site).href
+const socialImageAlt = `${siteTitle} share image`
+const pageType = articleDate ? 'article' : 'website'
 ---
 
 <meta charset='utf-8' />
@@ -49,21 +51,27 @@ const socialImageURL = new URL(ogImage ? ogImage : config.socialCard, Astro.url)
 <meta content={siteTitle} name='title' />
 <meta content={description} name='description' />
 <meta content={config.author} name='author' />
+<meta content={siteTitle} itemprop='name' />
+<meta content={description} itemprop='description' />
+<meta content={socialImageURL} itemprop='image' />
 
 {/* Theme Color */}
 {/* <meta content='' name='theme-color' /> */}
 <meta name='color-scheme' content='light dark' />
 
-{/* Open Graph / Facebook */}
-<meta content={articleDate ? 'article' : 'website'} property='og:type' />
-<meta content={title} property='og:title' />
+{/* Link share cards: WeChat reads these Open Graph tags when generating rich link cards. */}
+<meta content={pageType} property='og:type' />
+<meta content={siteTitle} property='og:title' />
 <meta content={description} property='og:description' />
 <meta content={canonicalURL} property='og:url' />
 <meta content={config.title} property='og:site_name' />
 <meta content={config.locale.attrs} property='og:locale' />
 <meta content={socialImageURL} property='og:image' />
+<meta content={socialImageURL} property='og:image:secure_url' />
+<meta content='image/png' property='og:image:type' />
 <meta content='1200' property='og:image:width' />
 <meta content='630' property='og:image:height' />
+<meta content={socialImageAlt} property='og:image:alt' />
 {
   articleDate && (
     <>
@@ -76,9 +84,10 @@ const socialImageURL = new URL(ogImage ? ogImage : config.socialCard, Astro.url)
 {/* Twitter */}
 <meta content='summary_large_image' property='twitter:card' />
 <meta content={canonicalURL} property='twitter:url' />
-<meta content={title} property='twitter:title' />
+<meta content={siteTitle} property='twitter:title' />
 <meta content={description} property='twitter:description' />
 <meta content={socialImageURL} property='twitter:image' />
+<meta content={socialImageAlt} property='twitter:image:alt' />
 
 {/* Sitemap */}
 <link href='/sitemap-index.xml' rel='sitemap' />
