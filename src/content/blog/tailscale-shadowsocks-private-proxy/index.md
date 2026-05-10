@@ -11,7 +11,7 @@ language: 'Chinese'
 comment: true
 ---
 
-这篇记录一下我在 LA 服务器上搭建私有 Shadowsocks 节点的过程。
+这篇记录一下我在服务器上搭建私有Shadowsocks连接的过程。
 
 核心思路很简单：Shadowsocks 本身只负责代理服务，真正的访问控制交给 Tailscale 和防火墙完成。服务端监听所有地址，但防火墙只允许来自 `tailscale0` 网卡的流量访问代理端口。这样公网不会暴露 Shadowsocks 端口，只有已经加入同一个 Tailscale 网络的设备才能连上。
 
@@ -141,7 +141,7 @@ sudo ufw status
 
 ## 四、做一些网络优化
 
-跨国线路叠加 Tailscale 隧道后，速度瓶颈经常不在 Shadowsocks，而在 UDP 隧道、运营商 QoS 或 MTU。
+叠加 Tailscale 隧道后，访问速度瓶颈经常不在 Shadowsocks，而在 UDP 隧道、运营商 QoS 或 MTU。
 
 先开启 BBR：
 
@@ -237,7 +237,7 @@ sudo ufw allow in on tailscale0 to any port 8388
 
 第一，Tailscale 没有直连，而是走了 DERP 中继。
 
-第二，跨国 UDP 被运营商限速或丢包。Tailscale 底层主要依赖 UDP，如果晚高峰质量明显下降，这个问题会更突出。
+第二，UDP 被运营商限速或丢包。Tailscale 底层主要依赖 UDP，如果晚高峰质量明显下降，这个问题会更突出。
 
 可以做一个临时对照实验：
 
@@ -255,6 +255,6 @@ sudo ufw delete allow 8388
 
 ## 最后
 
-这个方案的优势是隐蔽和可控：Shadowsocks 端口不暴露在公网，访问权限跟着 Tailscale 设备授权走。缺点也很明确：速度上限取决于 Tailscale 的连接质量，尤其是跨国 UDP 环境。
+这个方案的优势是隐蔽和可控：Shadowsocks 端口不暴露在公网，访问权限跟着 Tailscale 设备授权走。缺点也很明确：速度上限取决于 Tailscale 的连接质量。
 
 如果你的网络能稳定打洞直连，这套配置会非常省心。如果长期走 DERP 或被 UDP QoS 卡住，就没必要硬扛，可以考虑公网高位端口直连，或者换更适合当前线路的传输方式。
