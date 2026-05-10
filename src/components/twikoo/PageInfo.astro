@@ -25,72 +25,83 @@ const path = Astro.url.pathname
 </div>
 
 <script>
-  // localStorage 方案：每次访问都增加计数
-  function loadPageStats() {
+  import { getCommentsCount } from 'twikoo'
+  import config from 'virtual:config'
+
+  const recordedPageviews = new Set()
+
+  function getUniquePaths() {
     const paths = Array.from(document.querySelectorAll('[data-path]'))
       .map(el => el.getAttribute('data-path'))
       .filter(Boolean)
-    
-    const uniquePaths = [...new Set(paths)]
 
-    for (const path of uniquePaths) {
-      // 1. 记录访问并显示浏览量
+    return [...new Set(paths)]
+  }
+
+  function setText(selector, path, value) {
+    document.querySelectorAll(selector).forEach(el => {
+      if (el.getAttribute('data-path') === path) {
+        el.textContent = String(value)
+      }
+    })
+  }
+
+  async function recordPageviews() {
+    const uniquePaths = getUniquePaths()
+
+    await Promise.all(uniquePaths.map(async path => {
+      if (recordedPageviews.has(path)) return
+      recordedPageviews.add(path)
+
       try {
-        const key = `twikoo-views-${path}`
-        const current = parseInt(localStorage.getItem(key) || '0', 10)
-        const newCount = current + 1
-        localStorage.setItem(key, String(newCount))
-
-        document.querySelectorAll(`.twikoo-pageview-count[data-path="${path}"]`).forEach(el => {
-          el.textContent = String(newCount)
+        const response = await fetch('/api/pageview', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: path, title: document.title })
         })
+
+        const data = await response.json()
+        if (typeof data.count === 'number') {
+          setText('.twikoo-pageview-count', path, data.count)
+        }
       } catch (error) {
+        recordedPageviews.delete(path)
         console.debug(`Failed to record views: ${error}`)
       }
+    }))
+  }
 
-      // 2. 计算评论数（从 DOM 中直接计数）
-      try {
-        const twikooContainer = document.getElementById('twikoo')
-        if (twikooContainer) {
-          const commentItems = twikooContainer.querySelectorAll('.tk-comment')
-          const commentCount = commentItems.length
+  async function loadCommentCounts() {
+    const uniquePaths = getUniquePaths()
+    const commentPaths = uniquePaths.filter(path =>
+      Array.from(document.querySelectorAll('.twikoo-comment-count')).some(
+        el => el.getAttribute('data-path') === path
+      )
+    )
 
-          document.querySelectorAll(`.twikoo-comment-count[data-path="${path}"]`).forEach(el => {
-            el.textContent = String(commentCount)
-          })
-        }
-      } catch (error) {
-        console.debug(`Failed to count comments: ${error}`)
+    if (!commentPaths.length) return
+
+    try {
+      const counts = await getCommentsCount({
+        envId: config.integ.twikoo.envId,
+        region: config.integ.twikoo.region || undefined,
+        urls: commentPaths,
+        includeReply: false
+      })
+
+      for (const item of counts) {
+        setText('.twikoo-comment-count', item.url, item.count ?? 0)
       }
+    } catch (error) {
+      console.debug(`Failed to load comment counts: ${error}`)
     }
   }
 
-  // 定期更新评论计数（每 500ms 检查一次）
-  function updateCommentCount() {
-    const paths = Array.from(document.querySelectorAll('[data-path]'))
-      .map(el => el.getAttribute('data-path'))
-      .filter(Boolean)
-    
-    const uniquePaths = [...new Set(paths)]
-
-    for (const path of uniquePaths) {
-      try {
-        const twikooContainer = document.getElementById('twikoo')
-        if (twikooContainer) {
-          const commentItems = twikooContainer.querySelectorAll('.tk-comment')
-          const commentCount = commentItems.length
-
-          document.querySelectorAll(`.twikoo-comment-count[data-path="${path}"]`).forEach(el => {
-            el.textContent = String(commentCount)
-          })
-        }
-      } catch (error) {
-        console.debug(`Failed to count comments: ${error}`)
-      }
-    }
+  function loadPageStats() {
+    recordPageviews()
+    loadCommentCounts()
   }
 
-  // 页面加载时立即记录访问
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
       setTimeout(loadPageStats, 500)
@@ -99,10 +110,5 @@ const path = Astro.url.pathname
     loadPageStats()
   }
 
-  // 定期更新评论计数
-  setInterval(updateCommentCount, 500)
-
-  // 监听自定义事件立即更新
-  window.addEventListener('twikoo:refresh-stats', loadPageStats)
+  window.addEventListener('twikoo:refresh-stats', loadCommentCounts)
 </script>
-

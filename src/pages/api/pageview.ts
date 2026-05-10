@@ -1,8 +1,27 @@
 import type { APIRoute } from 'astro'
 import { MongoClient } from 'mongodb'
 
-const DB_NAME = 'twikoo'
+const DB_NAME = process.env.MONGODB_DB || 'twikoo'
 const COLLECTION_NAME = 'pageviews'
+
+declare global {
+  // eslint-disable-next-line no-var
+  var __aurrellPageviewClient: Promise<MongoClient> | undefined
+}
+
+function normalizePath(url: string) {
+  try {
+    const parsedUrl = new URL(url, 'https://aurrell.local')
+    return parsedUrl.pathname.replace(/\/$/, '') || '/'
+  } catch {
+    return url.replace(/\/$/, '') || '/'
+  }
+}
+
+function getClient(uri: string) {
+  globalThis.__aurrellPageviewClient ??= new MongoClient(uri).connect()
+  return globalThis.__aurrellPageviewClient
+}
 
 export const POST: APIRoute = async ({ request }) => {
   const MONGODB_URI = process.env.MONGODB_URI || ''
@@ -15,7 +34,7 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   try {
-    const { url } = await request.json() as { url: string }
+    const { url, title } = await request.json() as { url: string; title?: string }
     
     if (!url) {
       return new Response(
@@ -24,36 +43,31 @@ export const POST: APIRoute = async ({ request }) => {
       )
     }
 
-    const client = new MongoClient(MONGODB_URI)
-    
-    try {
-      await client.connect()
-      const db = client.db(DB_NAME)
-      const collection = db.collection(COLLECTION_NAME)
+    const normalizedUrl = normalizePath(url)
+    const client = await getClient(MONGODB_URI)
+    const db = client.db(DB_NAME)
+    const collection = db.collection(COLLECTION_NAME)
 
-      // 增加访问计数
-      const result = await collection.findOneAndUpdate(
-        { url },
-        {
-          $inc: { count: 1 },
-          $set: { url, updatedAt: new Date() },
-          $setOnInsert: { createdAt: new Date() }
-        },
-        { upsert: true, returnDocument: 'after' }
-      )
+    const now = new Date()
+    const result = await collection.findOneAndUpdate(
+      { url: normalizedUrl },
+      {
+        $inc: { count: 1 },
+        $set: { url: normalizedUrl, title: title || normalizedUrl, updatedAt: now },
+        $setOnInsert: { createdAt: now }
+      },
+      { upsert: true, returnDocument: 'after' }
+    )
 
-      const count = result.value?.count || 1
+    const count = result?.count ?? 1
 
-      return new Response(
-        JSON.stringify({ url, count }),
-        {
-          status: 200,
-          headers: { 'Content-Type': 'application/json' }
-        }
-      )
-    } finally {
-      await client.close()
-    }
+    return new Response(
+      JSON.stringify({ url: normalizedUrl, count }),
+      {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      }
+    )
   } catch (error) {
     console.error('Error in pageview API:', error)
     return new Response(
