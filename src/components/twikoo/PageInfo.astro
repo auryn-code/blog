@@ -11,15 +11,11 @@ const path = Astro.url.pathname
 ---
 
 <div class={cn('text-base text-sm text-muted-foreground', className)} data-path={path} {...props}>
-  <span class='twikoo-pageview-count' data-path={path}>-</span> views
   {
     comment && (
-      <>
-        {' | '}
-        <a href='#twikoo'>
-          <span class='twikoo-comment-count' data-path={path}>-</span> comments
-        </a>
-      </>
+      <a href='#twikoo'>
+        <span class='twikoo-comment-count' data-path={path}>-</span> comments
+      </a>
     )
   }
 </div>
@@ -27,8 +23,6 @@ const path = Astro.url.pathname
 <script>
   import { getCommentsCount } from 'twikoo'
   import config from 'virtual:config'
-
-  const recordedPageviews = new Set()
 
   function getUniquePaths() {
     const paths = Array.from(document.querySelectorAll('[data-path]'))
@@ -44,31 +38,6 @@ const path = Astro.url.pathname
         el.textContent = String(value)
       }
     })
-  }
-
-  async function recordPageviews() {
-    const uniquePaths = getUniquePaths()
-
-    await Promise.all(uniquePaths.map(async path => {
-      if (recordedPageviews.has(path)) return
-      recordedPageviews.add(path)
-
-      try {
-        const response = await fetch('/api/pageview', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url: path, title: document.title })
-        })
-
-        const data = await response.json()
-        if (typeof data.count === 'number') {
-          setText('.twikoo-pageview-count', path, data.count)
-        }
-      } catch (error) {
-        recordedPageviews.delete(path)
-        console.debug(`Failed to record views: ${error}`)
-      }
-    }))
   }
 
   async function loadCommentCounts() {
@@ -98,7 +67,6 @@ const path = Astro.url.pathname
   }
 
   function loadPageStats() {
-    recordPageviews()
     loadCommentCounts()
   }
 

@@ -1,7 +1,7 @@
 ---
 title: 基于 Tailscale 搭建私有 Shadowsocks 节点
 publishDate: 2026-05-11 11:00:00
-description: 在 LA 服务器上部署 Shadowsocks，并用 UFW 限制仅允许 Tailscale 组网设备访问。
+description: 仅允许 Tailscale 组网设备访问。
 tags:
   - tailscale
   - shadowsocks
